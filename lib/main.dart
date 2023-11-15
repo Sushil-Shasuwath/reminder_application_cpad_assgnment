@@ -13,15 +13,15 @@ void main() async {
   await Parse().initialize(keyApplicationId, keyParseServerUrl,
       clientKey: keyClientKey, debug: true);
 
-  runApp(MaterialApp(home: Task()));
+  runApp(MaterialApp(home: Note()));
 }
 
-class Task extends StatefulWidget {
+class Note extends StatefulWidget {
   @override
-  _TaskState createState() => _TaskState();
+  _NoteState createState() => _NoteState();
 }
 
-class _TaskState extends State<Task> {
+class _NoteState extends State<Note> {
   final titleController = TextEditingController();
   final contentController = TextEditingController();
 
@@ -29,7 +29,7 @@ class _TaskState extends State<Task> {
     if (titleController.text.trim().isEmpty ||
         contentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Task details cannot be empty!"),
+        content: Text("Note details cannot be empty!"),
         duration: Duration(seconds: 2),
       ));
       return;
@@ -55,7 +55,7 @@ class _TaskState extends State<Task> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("ToDo Application - CPAD Assignment"),
+        title: Text("Reminder Application - CPAD Assignment"),
         backgroundColor: Colors.greenAccent,
         centerTitle: true,
       ),
@@ -81,7 +81,7 @@ class _TaskState extends State<Task> {
                           focusedBorder: new OutlineInputBorder(
                             borderSide: new BorderSide(color: Colors.black12),
                           ),
-                          labelText: "ToDo Header",
+                          labelText: "Title",
                           labelStyle: TextStyle(color: Colors.greenAccent)),
                     ),
                   ),
@@ -107,7 +107,7 @@ class _TaskState extends State<Task> {
                           focusedBorder: new OutlineInputBorder(
                             borderSide: new BorderSide(color: Colors.black12),
                           ),
-                          labelText: "ToDo Content",
+                          labelText: "Notes",
                           labelStyle: TextStyle(color: Colors.greenAccent)),
                     ),
                   ),
@@ -119,24 +119,26 @@ class _TaskState extends State<Task> {
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: const Color.fromARGB(255, 153, 187, 115),
+                      backgroundColor: Colors.greenAccent,
                       minimumSize: Size(142, 40),
+                      // minimumSize: const Size.fromHeight(40),
                     ),
-                    onPressed: clearContent,
-                    child: Text("Clear")),
+                    onPressed: saveContent,
+                    child: Text("Save")),
                 SizedBox(width: 10),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: Colors.greenAccent,
-                      minimumSize: Size(242, 40),
+                      backgroundColor: const Color.fromARGB(255, 153, 187, 115),
+                      minimumSize: Size(142, 40),
+                      // minimumSize: const Size.fromHeight(40),
                     ),
-                    onPressed: saveContent,
-                    child: Text("Save")),
+                    onPressed: clearContent,
+                    child: Text("Clear")),
               ])),
           Expanded(
               child: FutureBuilder<List<ParseObject>>(
-                  future: getTask(),
+                  future: getNote(),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.none:
@@ -162,36 +164,44 @@ class _TaskState extends State<Task> {
                           );
                         } else {
                           return ListView.builder(
-                              padding: EdgeInsets.only(top: 10.0),
+                              padding:
+                                  EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0.0),
+                              // padding: EdgeInsets.only(top: 10.0),
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index) {
-                                //*************************************
-                                //Get Parse Object Values
-                                final varTask = snapshot.data![index];
-                                final varTitle = varTask.get<String>('title')!;
+                                final varNote = snapshot.data![index];
+                                final varTitle = varNote.get<String>('title')!;
                                 final varContent =
-                                    varTask.get<String>('content')!;
-                                final varStatus = varTask.get<bool>('status')!;
+                                    varNote.get<String>('content')!;
+                                final varStatus = varNote.get<bool>('status')!;
                                 final varDate = dateFormat.format(
-                                    varTask.get<DateTime>('updatedAt')!);
+                                    varNote.get<DateTime>('updatedAt')!);
                                 final varOriginalDate =
                                     originalDateFormat.format(
-                                        varTask.get<DateTime>('updatedAt')!);
-                                //*************************************
+                                        varNote.get<DateTime>('updatedAt')!);
 
                                 return ListTile(
-                                  title: Text(varTitle),
-                                  subtitle: Text(varContent),
+                                  title: new Center(
+                                      child: new Text(varTitle,
+                                          style: new TextStyle())),
+                                  subtitle: new Center(
+                                      child: new Text(varContent,
+                                          style: new TextStyle())),
                                   isThreeLine: true,
+                                  shape: RoundedRectangleBorder(
+                                      side: BorderSide(
+                                          color: Colors.black12, width: 2)),
                                   onTap: () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => TaskDetails(
+                                          builder: (context) => NoteDetails(
                                               varTitle,
                                               varContent,
                                               varOriginalDate,
                                               varStatus))),
                                   leading: Container(
+                                    width: 60.0,
+                                    height: 50.0,
                                     decoration: BoxDecoration(
                                       color: const Color.fromARGB(
                                           255, 153, 187, 115),
@@ -207,7 +217,7 @@ class _TaskState extends State<Task> {
                                       varDate,
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 10,
+                                        fontSize: 12,
                                       ),
                                     ),
                                   ),
@@ -218,8 +228,8 @@ class _TaskState extends State<Task> {
                                           value: varStatus,
                                           activeColor: Colors.greenAccent,
                                           onChanged: (value) async {
-                                            await updateTask(
-                                                varTask.objectId!, value!);
+                                            await updateNote(
+                                                varNote.objectId!, value!);
                                             setState(() {
                                               //Refresh UI
                                             });
@@ -230,11 +240,11 @@ class _TaskState extends State<Task> {
                                           color: Colors.greenAccent,
                                         ),
                                         onPressed: () async {
-                                          await deleteTask(varTask.objectId!);
+                                          await deleteNote(varNote.objectId!);
                                           setState(() {
                                             final snackBar = SnackBar(
                                               content: Text(
-                                                  "Task Deleted Successfully!"),
+                                                  "Note Deleted Successfully!"),
                                               duration: Duration(seconds: 2),
                                             );
                                             ScaffoldMessenger.of(context)
@@ -256,17 +266,17 @@ class _TaskState extends State<Task> {
   }
 
   Future<void> saveContentToParse(String title, String content) async {
-    final todo = ParseObject('ToDoFlutter')
+    final reminder = ParseObject('ReminderFlutter')
       ..set('title', title)
       ..set('content', content)
       ..set('status', false);
-    await todo.save();
+    await reminder.save();
   }
 
-  Future<List<ParseObject>> getTask() async {
-    QueryBuilder<ParseObject> queryTask =
-        QueryBuilder<ParseObject>(ParseObject('ToDoFlutter'));
-    final ParseResponse apiResponse = await queryTask.query();
+  Future<List<ParseObject>> getNote() async {
+    QueryBuilder<ParseObject> queryNote =
+        QueryBuilder<ParseObject>(ParseObject('ReminderFlutter'));
+    final ParseResponse apiResponse = await queryNote.query();
 
     if (apiResponse.success && apiResponse.results != null) {
       return apiResponse.results as List<ParseObject>;
@@ -275,85 +285,159 @@ class _TaskState extends State<Task> {
     }
   }
 
-  Future<void> updateTask(String id, bool status) async {
-    var todo = ParseObject('ToDoFlutter')
+  Future<void> updateNote(String id, bool status) async {
+    var reminder = ParseObject('ReminderFlutter')
       ..objectId = id
       ..set('status', status);
-    await todo.save();
+    await reminder.save();
   }
 
-  Future<void> deleteTask(String id) async {
-    var todo = ParseObject('ToDoFlutter')..objectId = id;
-    await todo.delete();
+  Future<void> deleteNote(String id) async {
+    var reminder = ParseObject('ReminderFlutter')..objectId = id;
+    await reminder.delete();
   }
 }
 
-class TaskDetails extends StatefulWidget {
+class NoteDetails extends StatefulWidget {
   final String varTitle;
   final String varContent;
   final String varOriginalDate;
   final bool varStatus;
 
-  TaskDetails(
+  NoteDetails(
       this.varTitle, this.varContent, this.varOriginalDate, this.varStatus);
 
   @override
-  _TaskDetailsState createState() =>
-      _TaskDetailsState(varTitle, varContent, varOriginalDate, varStatus);
+  _NoteDetailsState createState() =>
+      _NoteDetailsState(varTitle, varContent, varOriginalDate, varStatus);
 }
 
-class _TaskDetailsState extends State<TaskDetails> {
+class _NoteDetailsState extends State<NoteDetails> {
   final String varTitle;
   final String varContent;
   final String varOriginalDate;
   final bool varStatus;
 
-  _TaskDetailsState(
+  _NoteDetailsState(
       this.varTitle, this.varContent, this.varOriginalDate, this.varStatus);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Task Details"),
+          title: Text("Reminders"),
           backgroundColor: Colors.greenAccent,
           centerTitle: true,
         ),
         body: Container(
-            padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
-            child: Column(children: <Widget>[
-              Column(
-                children: [
-                  Container(
-                      padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
-                      child: Text(
-                        varTitle,
-                        style: DefaultTextStyle.of(context)
-                            .style
-                            .apply(fontSizeFactor: 1.0),
-                      )),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
-                      width: 500,
-                      child: Text(varContent)),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
-                      width: 500,
-                      child: Text(
-                        varOriginalDate,
-                      )),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
-                      width: 500,
-                      child: Text(
-                        varStatus ? "Status: DONE" : "Status: Pending",
+          width: 500,
+          height: 500,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.black12,
+              width: 2,
+            ),
+          ),
+          padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0.0),
+          margin: EdgeInsets.symmetric(vertical: 70.0, horizontal: 550.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Title : ",
                         style: TextStyle(
-                          color: Colors.black,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ))
-                ],
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.greenAccent)),
+                    Text(varTitle)
+                  ],
+                ),
               ),
-            ])));
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Notes : ",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.greenAccent)),
+                    Text(varContent)
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Date : ",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.greenAccent)),
+                    Text(varOriginalDate)
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Status : ",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            color: Colors.greenAccent)),
+                    Text(varStatus ? "DONE" : "Pending")
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ));
+    // Container(
+    //         padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
+    //         child: Column(children: <Widget>[
+    //           Column(
+    //             children: [
+    //               Container(
+    //                   padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
+    //                   child: Text(varTitle,
+    //                       // style: DefaultTextStyle.of(context)
+    //                       //     .style
+    //                       //     .apply(fontSizeFactor: 1.0),
+    //                       style: TextStyle(
+    //                           color: Colors.greenAccent,
+    //                           fontWeight: FontWeight.w600))),
+    //               Container(
+    //                   padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
+    //                   width: 500,
+    //                   child: Text(varContent)),
+    //               Container(
+    //                   padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
+    //                   width: 500,
+    //                   child: Text(
+    //                     varOriginalDate,
+    //                   )),
+    //               Container(
+    //                   padding: EdgeInsets.fromLTRB(18.0, 8.0, 18.0, 18.0),
+    //                   width: 500,
+    //                   child: Text(
+    //                     varStatus ? "Status: DONE" : "Status: Pending",
+    //                     style: TextStyle(color: Colors.black),
+    //                   ))
+    //             ],
+    //           ),
+    //         ])));
   }
 }
