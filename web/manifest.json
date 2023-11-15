@@ -1,6 +1,6 @@
 {
-    "name": "todo_app_cpad",
-    "short_name": "todo_app_cpad",
+    "name": "reminder_app_cpad",
+    "short_name": "reminder_app_cpad",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
