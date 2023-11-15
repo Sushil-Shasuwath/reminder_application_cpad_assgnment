@@ -53,25 +53,25 @@ Application Features:
 
 Back4App:
 
-![Alt text](screenshots\Back4App.png?raw=true "Back4App page after creating server")
+![Back4App](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/049654d8-3452-4764-83ba-a8153e6b0efa)
 
-![Alt text](screenshots\Back4App_Keys.png?raw=true "Back4App Keys")
+![Back4App_Keys](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/e193b00c-dd1c-4b1e-a7ea-de7affa29fe0)
 
-![Alt text](screenshots\Flutter_link_Back4App.png?raw=true "Back4App Keys added in flutter")
+![Flutter_link_Back4App](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/cba53f72-488b-4340-a5b7-e8000e81bc11)
 
-![Alt text](screenshots\Reminder_App.png?raw=true "Reminder App")
+![Reminder_App](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/5678beb5-2d7d-4db9-b6b2-5d3f1b9210d3)
 
-![Alt text](screenshots\Reminder_App_Focused.png?raw=true)
+![Reminder_App_Focused](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/94490fe4-cc74-4d07-92cf-5336cb353d4c)
 
-![Alt text](screenshots\Back4App_Add.png?raw=true)
+![Back4App_Add](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/e50073b0-6912-42a4-bab0-f9d6b59af88b)
 
-![Alt text](screenshots\Reminder_App_Updated.png?raw=true)
+![Reminder_App_Updated](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/5fc01d06-fe07-4204-b224-d7bb2c40b759)
 
-![Alt text](screenshots\Back4App_Update.png?raw=true)
+![Back4App_Update](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/e7960c3f-0315-434b-9f94-80d33424b6fc)
 
-![Alt text](screenshots\Reminder_App_Focused2.png?raw=true)
+![Reminder_App_Focused2](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/54aad278-4bdf-4b1f-be22-266995e515ca)
 
-![Alt text](screenshots\Back4App_Add2.png?raw=true)
+![Back4App_Add2](https://github.com/Sushil-Shasuwath/reminder_application_cpad_assgnment/assets/48911974/2cdc9d6a-233d-4fd6-ad94-6b096232df37)
 
 References:
 https://docs.flutter.dev/get-started/install/macos
